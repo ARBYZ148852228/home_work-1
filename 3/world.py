@@ -1,9 +1,11 @@
+from aifc import Aifc_read
 from random import randint, choice
 import texture
 from tkinter import NW
 
 AIR = 'a'
 BLOCK_SIZE = 64
+AIR = 'a'
 GROUND = 'g'
 WATER = 'w'
 CONCRETE = 'c'
@@ -17,6 +19,13 @@ HEIGHT = SCREEN_HEIGHT * 4
 _canvas = None
 _map = []
 
+def get_block(row, col):
+    if row < 0 or col < 0 or row >= get_rows() \
+            or col >= get_cols():
+        return AIR
+    else:
+        return _map[row][col].get_block()
+
 def update_cell(row, col):
     if row < 0 or col < 0 or row >= get_rows() or col >= get_cols():
         return
@@ -24,6 +33,7 @@ def update_cell(row, col):
 
 def update_map():
     first_row = get_row(_camera_y)
+<<<<<<< HEAD
     last_row = get_row(_camera_y + SCREEN_HEIGHT - 1)
     first_col = get_col(_camera_x)
     last_col = get_col(_camera_x + SCREEN_WIDTH - 1)
@@ -34,6 +44,15 @@ def update_map():
 
 
 
+=======
+    last_row = get_row(_camera_y + SCREEN_HEIGHT-1)
+    first_col = get_col(_camera_x)
+    last_col = get_col(_camera_x + SCREEN_WIDTH-1)
+    for i in range(first_row, last_row+1):
+        for j in range(first_col, last_col+1):
+            update_cell(i, j)
+
+>>>>>>> d742d6360d274e10393a8ee7985e3e7093db6595
 def get_row(y):
     return int(y)//BLOCK_SIZE
 
@@ -41,7 +60,10 @@ def get_col(x):
     return int(x)//BLOCK_SIZE
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d742d6360d274e10393a8ee7985e3e7093db6595
 def get_rows():
     return len(_map)
 

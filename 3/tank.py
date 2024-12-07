@@ -54,6 +54,13 @@ class Tank:
             if self.__bot:
                 self.__AI_change_orientation()
 
+    def __check_map_collision(self):
+        result = self.__hitbox.check_map_collision()
+        if result:
+            self.__undo_move()
+            if self.__bot:
+                self.__AI_change_orientation()
+
     def set_target(self, target):
         self.__target = target
 

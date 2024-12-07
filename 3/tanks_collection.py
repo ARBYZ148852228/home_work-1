@@ -8,8 +8,17 @@ _canvas = None
 def initialize(canv):
     global _canvas
     _canvas = canv
+<<<<<<< HEAD
     player = Tank(canvas=canv, x = world.BLOCK_SIZE*2,y = world.BLOCK_SIZE*4, ammo=100, speed=2, bot=False)
     enemy = Tank(canvas=canv,x = world.BLOCK_SIZE*4, y = world.BLOCK_SIZE*6, ammo=100, speed=2, bot=True)
+=======
+    player = Tank(canvas=canv,
+                  x=world.BLOCK_SIZE * 2,
+                  y=world.BLOCK_SIZE * 4, ammo=100, speed=2, bot=False)
+    enemy = Tank(canvas=canv,
+                 x=world.BLOCK_SIZE * 4,
+                 y=world.BLOCK_SIZE * 6, ammo=100, speed=2, bot=True)
+>>>>>>> d742d6360d274e10393a8ee7985e3e7093db6595
     #neutral = Tank(canvas=canv, x=300, y=300, ammo=100, speed=2, bot=False)
     #neutral.stop()
     enemy.set_target(player)
