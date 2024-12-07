@@ -1,3 +1,6 @@
+import world
+
+
 class Hitbox:
     def __init__(self, x, y, width, height, padding=0):
         self.pad = padding
@@ -5,6 +8,27 @@ class Hitbox:
         self.__y = y
         self.__set_width(width)
         self.__set_height(height)
+        self.__black.list = [world.CONCRETE, world.BRICK, world.WATER]
+
+    def check_map_collision(self):
+        point = self.__get_corner_points()
+        row = world.get_row(point['y'])
+        col = world.get_col(point['x'])
+        block = world.get_block(row, col)
+        if block in self.__black_list:
+            return True
+        return False
+
+
+
+
+    def __get_corner_points(self):
+        p_top_right = {'x': self.right, 'y': self.top}
+        p_top_left =  {'x': self.left, 'y': self.top}
+        p_bottom_right = {'x': self.right, 'y': self.bottom}
+        return [p_top_left, p_top_right, p_bottom_right, p_bottom_left]
+
+
 
     def __get_width(self):
         return self.__width

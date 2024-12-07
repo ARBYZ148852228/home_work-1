@@ -2,7 +2,7 @@ from random import randint, choice
 import texture
 from tkinter import NW
 
-
+AIR = 'a'
 BLOCK_SIZE = 64
 GROUND = 'g'
 WATER = 'w'
@@ -23,9 +23,24 @@ def update_cell(row, col):
     _map[row][col].update()
 
 def update_map():
-    for i in range(0, get_rows()):
-        for j in range(0, get_cols()):
+    first_row = get_row(_camera_y)
+    last_row = get_row(_camera_y + SCREEN_HEIGHT - 1)
+    first_col = get_col(_camera_x)
+    last_col = get_col(_camera_x + SCREEN_WIDTH - 1)
+
+    for i in range(first_row, last_row + 1):
+        for j in range(first_col, last_col + 1):
             update_cell(i, j)
+
+
+
+def get_row(y):
+    return int(y)//BLOCK_SIZE
+
+def get_col(x):
+    return int(x)//BLOCK_SIZE
+
+
 
 def get_rows():
     return len(_map)
@@ -88,10 +103,19 @@ def get_screen_x(world_x):
 def get_screen_y(world_y):
     return world_y - _camera_y
 
+def get_block(row, col):
+    if row < 0 or col < 0 or row >= get_rows() \
+        or col >= get_cols():
+        return AIR
+    else:
+        return _map[row][col].get_block()
+
 class _Cell:
    def __init__(self, x, y, block, canvas):
           self.__x = x
           self.__y = y
+          self.__screen_x = get_screen_x(x)
+          self.__screen_y = get_screen_y(y)
           self.__canvas = canvas
           self.__block = block
           self.__create_element(block)
@@ -101,13 +125,16 @@ class _Cell:
            return
        screen_x = get_screen_x(self.__x)
        screen_y = get_screen_y(self.__y)
-       self.__canvas.moveto(self.__id, x=screen_x, y=screen_y)
-       if self.__block == GROUND:
+       if self.__screen_x == screen_x and self.__screen_y == screen_y:
            return
+       self.__canvas.moveto(self.__id, x=screen_x, y=screen_y)
+       self.__screen_x = screen_x
+       self.__screen_y = screen_y
+
 
    def __create_element(self, block):
        if block != GROUND:
-           self.__id = self.__canvas.create_image(self.__x, self.__y,
+           self.__id = self.__canvas.create_image(self.__screen_x, self.__screen_y,
                                                   image = texture.get(block), anchor = NW)
 
    def __del__(self):

@@ -20,7 +20,7 @@ class Tank:
         self.__hp = 100
         self.__xp = 0
         self.__ammo = ammo
-        self.__fuel = 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+        self.__fuel = 1000
         self.__speed = speed
         self.__x = x
         self.__y = y
@@ -34,6 +34,16 @@ class Tank:
             self.__y = 0
         self.__create()
         self.right()
+
+
+
+
+    def __check_map_collision(self):
+        result = self.__hitbox.check_map_collision()
+        if result:
+            self.__undo_move()
+            if self.__bot:
+                self.__AI_change_orientation()
 
     def __check_out_of_world(self):
         if self.__hitbox.left < 0 or \
@@ -123,6 +133,7 @@ class Tank:
             self.__y += self.__dy
             self.__update_hitbox()
             self.__check_out_of_world()
+            self.__check_map_collision()
             self.__repaint()
 
     def __create(self):
