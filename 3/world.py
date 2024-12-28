@@ -19,6 +19,9 @@ HEIGHT = SCREEN_HEIGHT * 4
 _canvas = None
 _map = []
 
+def load_map(filename):
+    pass
+
 def get_block(row, col):
     if row < 0 or col < 0 or row >= get_rows() \
             or col >= get_cols():
@@ -27,9 +30,9 @@ def get_block(row, col):
         return _map[row][col].get_block()
 
 def update_cell(row, col):
-    if row < 0 or col < 0 or row >= get_rows() or col >= get_cols():
-        return
-    _map[row][col].update()
+    if inside_of_map(row, col):
+        _map[row][col].update()
+
 
 def update_map(all=False):
     first_row = get_row(_camera_y)
@@ -115,6 +118,30 @@ def set_camera_xy(x, y):
     if update_all:
         update_map(all=True)
 
+def destroy(self):
+    if self.get_block() == BRICK:
+        self.set_block(GROUND)
+        return True
+    return False
+
+
+
+
+
+def set_block(self, block):
+    if self.__block == block:
+        return
+    elif block == GROUND:
+        self.__delete_element()
+    elif self.__block == GROUND:
+        self.__create_element(block)
+    else:
+        self.itemconfig(self.__id, image = texture.get(block))
+    self.__block = block
+
+
+
+
 
 
 def move_camera(delta_x, delta_y):
@@ -126,12 +153,21 @@ def get_screen_x(world_x):
 def get_screen_y(world_y):
     return world_y - _camera_y
 
-def get_block(row, col):
-    if row < 0 or col < 0 or row >= get_rows() \
-        or col >= get_cols():
-        return AIR
-    else:
+
+def get_block(self, row, col):
+    if inside_of_map(row, col):
         return _map[row][col].get_block()
+    return AIR
+
+def destroy(row,col):
+    if row < 1 or col < 1 or row >= get_rows() - 1 or col >= get_cols() - 1:
+        return False
+    return _map[row][col].destroy()
+
+def inside_of_map(row,col):
+    if row < 1 or col < 0 or row >= get_rows() or col >= get_cols():
+        return False
+    return True
 
 class _Cell:
    def __init__(self, x, y, block, canvas):
@@ -160,14 +196,24 @@ class _Cell:
            self.__id = self.__canvas.create_image(self.__screen_x, self.__screen_y,
                                                   image = texture.get(block), anchor = NW)
 
-   def __del__(self):
+   def __delete_element(self):
        try:
            self.__canvas.delete(self.__id)
        except:
            pass
 
-   def get_block(self):
-       return self.__block
+
+
+
+   def __del__(self):
+       self.__delete_element()
+
+
+   def get_block(self, row, col):
+       if inside_of_map(row, col):
+           return _map[row][col].get_block()
+       return AIR
+
 
 
 
