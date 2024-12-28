@@ -5,7 +5,6 @@ from tkinter import NW
 
 AIR = 'a'
 BLOCK_SIZE = 64
-AIR = 'a'
 GROUND = 'g'
 WATER = 'w'
 CONCRETE = 'c'

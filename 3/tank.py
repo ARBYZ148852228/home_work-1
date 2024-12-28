@@ -41,15 +41,29 @@ class Tank:
     def __check_map_collision(self):
         details = {}
         self.__set_usual_speed()
-        result = self.__hitbox.check_map_collision()
+        result = self.__hitbox.check_map_collision(details)
         if result:
-            if world.WATER in details and len(details) == 1:
-                self.__set_water_speed()
-            else:
-                self.__undo_move( )
+            self.__on_map_collision(details)
 
+    def __on_map_collision(self, details):
+        if world.WATER in details and len(details) == 1:
+            self._set_water_speed()
+
+        if world.BRICK in details:
+            pos = details[world.BRICK]
+            world.destroy(pos['row'] , pos['col'])
+        if world.CONCRETE in details:
+            self.__undo_move()
             if self.__bot:
-                self.__AI_change_orientat
+                self.__AI_change_orientation()
+
+
+
+
+
+
+
+
     def __check_out_of_world(self):
         if self.__hitbox.left < 0 or \
                 self.__hitbox.top < 0 or \
