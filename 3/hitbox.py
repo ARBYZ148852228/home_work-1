@@ -7,8 +7,9 @@ class Hitbox:
         self.__y = y
         self.__set_width(width)
         self.__set_height(height)
+        self.__black_list = [world.CONCRETE, world.BRICK, world.WATER, world.MISSLE]
 
-        self.__black_list = [world.CONCRETE, world.BRICK, world.WATER]
+
 
     def check_map_collision(self, details):
         point = self.__get_corner_points()

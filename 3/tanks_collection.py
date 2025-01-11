@@ -66,5 +66,5 @@ def spawn(is_bot = True):
         t = Tank(_canvas, x = col* world.BLOCK_SIZE, y = row * world.BLOCK_SIZE, speed = 2, bot =is_bot)
         if not check_collision(t):
             _tanks.append(t)
-            return t
+            return True
 

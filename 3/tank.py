@@ -35,6 +35,12 @@ class Tank:
         self.__create()
         self.right()
 
+    def __take_ammo(self):
+        self.__ammo += 10
+        if self.__ammo > 100:
+            self.__ammo = 100
+            self.ammo = 100
+
 
 
 
@@ -43,11 +49,28 @@ class Tank:
         self.__set_usual_speed()
         result = self.__hitbox.check_map_collision(details)
         if result:
-            self.__on_map_collision(details)
+            if world.WATER in details and len(details) == 1:
+                self._set_water_speed()
+            else:
+                self.__undo_move()
+                if self.__bot:
+                    self.__AI_change_orientation()
+
 
     def __on_map_collision(self, details):
         if world.WATER in details and len(details) == 1:
             self._set_water_speed()
+
+        elif world.MISSLE in details:
+            pos = details[world.MISSLE]
+            if world.take(pos['row'], pos['col']) == world.AIR:
+                self.__take_ammo()
+                self.__check_map_collision()
+                return
+        else:
+            self.__undo_move()
+            if self.__bot:
+                self.__AI_change_orientation()
 
         if world.BRICK in details:
             pos = details[world.BRICK]
@@ -74,11 +97,12 @@ class Tank:
                 self.__AI_change_orientation()
 
     def __check_map_collision(self):
-        result = self.__hitbox.check_map_collision()
+        details = {}
+        self.__set_usual_speed()
+        result = self.__hitbox.check_map_collision(details)
         if result:
-            self.__undo_move()
-            if self.__bot:
-                self.__AI_change_orientation()
+            self.__on_map_collision(details)
+
 
     def set_target(self, target):
         self.__target = target

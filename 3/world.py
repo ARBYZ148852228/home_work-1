@@ -2,7 +2,7 @@ from aifc import Aifc_read
 from random import randint, choice
 import texture
 from tkinter import NW
-
+MISSLE = 'm'
 AIR = 'a'
 BLOCK_SIZE = 64
 GROUND = 'g'
@@ -18,8 +18,31 @@ HEIGHT = SCREEN_HEIGHT * 4
 _canvas = None
 _map = []
 
-def load_map(filename):
-    pass
+def load_map(file_name):
+    global _map
+
+    _map = []
+    with open(file_name) as f:
+        i = 0
+        for line in f:
+            blocks = line.strip()
+            row = []
+            for j in range(len(blocks)):
+                cell = _Cell(_canvas, blocks[j], j * BLOCK_SIZE, i * BLOCK_SIZE)
+                row.append(cell)
+            _map.append(row)
+            i+=1
+
+
+
+
+
+
+
+def update_cell(row, col):
+    if row < 0 or col < 0 or row >= get_rows() or col >= get_cols():
+        return
+    _map[row][col].destroy()
 
 def get_block(row, col):
     if row < 0 or col < 0 or row >= get_rows() \
@@ -28,9 +51,6 @@ def get_block(row, col):
     else:
         return _map[row][col].get_block()
 
-def update_cell(row, col):
-    if inside_of_map(row, col):
-        _map[row][col].update()
 
 
 def update_map(all=False):
@@ -84,10 +104,13 @@ def create_map(rows = 20, cols = 20):
             row.append(cell)
         _map.append(row)
 
-def initialize(canv):
+def initialize(canvas):
     global _canvas
-    _canvas = canv
-    create_map(20, 20)
+    _canvas = canvas
+    create_map(25, 25)
+    load_map('../map/1.tmap')
+    load_map('../map/2.tmap')
+    load_map('../map/3.tmap')
 
 
 
@@ -117,11 +140,13 @@ def set_camera_xy(x, y):
     if update_all:
         update_map(all=True)
 
-def destroy(self):
-    if self.get_block() == BRICK:
-        self.set_block(GROUND)
-        return True
-    return False
+def destroy(row, col):
+    if row < 1 or col < 1 or row >= get_rows() - 1 or col >= get_cols() - 1:
+        return False
+    return _map[row][col].destroy()
+
+
+
 
 
 
@@ -138,9 +163,16 @@ def set_block(self, block):
         self.itemconfig(self.__id, image = texture.get(block))
     self.__block = block
 
+def take(row, col):
+    if _inside_of_map(row, col):
+        return _map[row][col].take()
+    return AIR
 
 
-
+def _inside_of_map(row, col):
+    if row < 0 or col < 0 or row >= get_rows() or col >= get_cols():
+        return False
+    return True
 
 
 def move_camera(delta_x, delta_y):
@@ -168,6 +200,7 @@ def inside_of_map(row,col):
         return False
     return True
 
+
 class _Cell:
    def __init__(self, x, y, block, canvas):
           self.__x = x
@@ -177,6 +210,15 @@ class _Cell:
           self.__canvas = canvas
           self.__block = block
           self.__create_element(block)
+
+   def take(self):
+       block = self.get_block()
+       if block == MISSLE:
+           self.__set_block(GROUND)
+           return block
+       else:
+           return AIR
+
 
    def update(self):
        if self.__block == GROUND:
@@ -198,14 +240,12 @@ class _Cell:
    def __delete_element(self):
        try:
            self.__canvas.delete(self.__id)
-       except:
+       except Exception:
            pass
-
-
-
 
    def __del__(self):
        self.__delete_element()
+
 
 
    def get_block(self, row, col):
