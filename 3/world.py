@@ -34,11 +34,6 @@ def load_map(file_name):
             i+=1
 
 
-
-
-
-
-
 def update_cell(row, col):
     if row < 0 or col < 0 or row >= get_rows() or col >= get_cols():
         return
